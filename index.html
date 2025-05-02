@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/images/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Boxify - Premium Custom Packaging Solutions for Your Business. We craft exceptional boxes designed to protect, impress, and deliver with confidence." />
+    <meta name="theme-color" content="#0A2540" />
+    <title>Boxify - Premium Custom Packaging Solutions</title>
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Boxify - Premium Custom Packaging Solutions" />
+    <meta property="og:description" content="Custom packaging solutions designed to protect, impress, and deliver with confidence." />
+    <meta property="og:image" content="/src/assets/images/og-image.jpg" />
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="/src/assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+    
+    <!-- Accessibility -->
+    <script>
+      // Remove focus outlines for mouse users, show for keyboard users
+      function handleFirstTab(e) {
+        if (e.keyCode === 9) {
+          document.body.classList.add('user-is-tabbing');
+          window.removeEventListener('keydown', handleFirstTab);
+        }
+      }
+      window.addEventListener('keydown', handleFirstTab);
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
