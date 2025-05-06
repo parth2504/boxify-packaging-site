@@ -1,38 +1,38 @@
 import { useEffect, useCallback, useRef } from 'react';
 
-type KeyHandler = (e: KeyboardEvent) => void;
-type KeyCombo = string | string[];
-type Options = {
-  exact?: boolean;
-  preventDefault?: boolean;
-  ignoreInputs?: boolean;
-  ignoreContentEditable?: boolean;
-};
+type KeyCombo = string[];
+type Callback = (e: KeyboardEvent) => void;
 
-export const useKeyboardShortcut = (
-  keyCombo: KeyCombo,
-  handler: KeyHandler,
-  options: Options = {}
-) => {
-  const {
-    exact = false,
-    preventDefault = true,
-    ignoreInputs = true,
-    ignoreContentEditable = true,
-  } = options;
+export const useKeyboardShortcut = (keys: KeyCombo, callback: Callback) => {
+  const pressedKeys = useRef<Set<string>>(new Set());
+  
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Don't trigger shortcuts when typing in input fields
+    if (
+      e.target instanceof HTMLInputElement ||
+      e.target instanceof HTMLTextAreaElement ||
+      e.target instanceof HTMLSelectElement
+    ) {
+      return;
+    }
 
-  // Use refs to avoid recreating the handler on every render
-  const handlerRef = useRef(handler);
-  const exactRef = useRef(exact);
-  const preventDefaultRef = useRef(preventDefault);
-  const ignoreInputsRef = useRef(ignoreInputs);
-  const ignoreContentEditableRef = useRef(ignoreContentEditable);
+    const key = e.key.toLowerCase();
+    pressedKeys.current.add(key);
 
-  // Update refs when props change
-  useEffect(() => {
-    handlerRef.current = handler;
-    exactRef.current = exact;
-    preventDefaultRef.current = preventDefault;
+    const targetKeys = keys.map(k => k.toLowerCase());
+    const allKeysPressed = targetKeys.every(k => pressedKeys.current.has(k));
+    const hasExtraKeys = pressedKeys.current.size > targetKeys.length;
+
+    if (allKeysPressed && !hasExtraKeys) {
+      e.preventDefault();
+      callback(e);
+    }
+  }, [callback, keys]);
+
+  const handleKeyUp = useCallback((e: KeyboardEvent) => {
+    const key = e.key.toLowerCase();
+    pressedKeys.current.delete(key);
+  }, []);
 
   const handleBlur = useCallback(() => {
     pressedKeys.current.clear();

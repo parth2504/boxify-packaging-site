@@ -5,20 +5,17 @@ interface LoadingSpinnerProps {
   size?: number;
   color?: string;
   thickness?: number;
-  speed?: number;
-  className?: string;
 }
 
-const LoadingSpinner = ({
-  size = 24,
+const LoadingSpinner = ({ 
+  size = 24, 
   color = 'currentColor',
-  thickness = 2,
-  speed = 1.5,
-  className = ''
+  thickness = 2 
 }: LoadingSpinnerProps) => {
   return (
-    <div
-      className={`inline-flex items-center justify-center ${className}`}
+    <div 
+      className="inline-block"
+      style={{ width: size, height: size }}
       role="status"
       aria-label="Loading"
     >
@@ -32,7 +29,7 @@ const LoadingSpinner = ({
           rotate: 360
         }}
         transition={{
-          duration: speed,
+          duration: 1,
           repeat: Infinity,
           ease: "linear"
         }}
@@ -44,21 +41,18 @@ const LoadingSpinner = ({
           stroke={color}
           strokeWidth={thickness}
           strokeLinecap="round"
-          initial={{ pathLength: 0.33 }}
-          animate={{
-            pathLength: [0.33, 0.66, 0.33],
-            rotate: [0, 180, 360],
+          initial={{ pathLength: 0.3, opacity: 0.3 }}
+          animate={{ 
+            pathLength: [0.3, 0.7, 0.3],
+            opacity: [0.3, 0.7, 0.3]
           }}
           transition={{
-            duration: speed * 2,
+            duration: 1.5,
             repeat: Infinity,
             ease: "easeInOut"
           }}
         />
       </motion.svg>
-
-      {/* Hide text visually but keep it for screen readers */}
-      <span className="sr-only">Loading...</span>
     </div>
   );
 };
