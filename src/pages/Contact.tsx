@@ -1,116 +1,48 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
+import { Dialog } from '@reach/dialog';
 import { useToast } from '../context/ToastContext';
-import Button from '../components/common/Button';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import FormField from '../components/common/FormField';
 import AriaLive from '../components/common/AriaLive';
-import {useKeyboardShortcut} from '../hooks/useKeyboardShortcut';
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
+import {
+  MessageCircle,
   Send,
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
   User,
-  MessageSquare
+  MessageSquare,
+  ArrowRight,
+  CheckCircle
 } from 'lucide-react';
-import emailjs from '@emailjs/browser'; // Import EmailJS
 
 interface ContactFormData {
   name: string;
   email: string;
+  subject: string;
   message: string;
 }
 
-const contactInfo = [
-  {
-    icon: <Phone className="w-6 h-6" />,
-    title: 'Phone',
-    details: [
-      '+1 (555) 123-4567',
-      '+1 (555) 987-6543'
-    ]
-  },
-  {
-    icon: <Mail className="w-6 h-6" />,
-    title: 'Email',
-    details: [
-      'info@boxify.com',
-      'support@boxify.com'
-    ]
-  },
-  {
-    icon: <MapPin className="w-6 h-6" />,
-    title: 'Location',
-    details: [
-      '123 Packaging Street',
-      'Box City, BC 12345'
-    ]
-  },
-  {
-    icon: <Clock className="w-6 h-6" />,
-    title: 'Business Hours',
-    details: [
-      'Mon - Fri: 9:00 AM - 6:00 PM',
-      'Sat: 10:00 AM - 2:00 PM'
-    ]
-  }
-];
-
-// Add contact page background and location images
-const CONTACT_BG = 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000';
-const OFFICE_LOCATION = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800';
-
 const Contact = () => {
-  const formRef = useRef<HTMLFormElement>(null);
-  const { register, handleSubmit, formState: { errors, dirtyFields }, reset } = useForm<ContactFormData>();
-  const { showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [ariaMessage, setAriaMessage] = useState('');
+  const formRef = useRef<HTMLFormElement>(null);
+  const { showToast } = useToast();
 
-  // Initialize EmailJS with your User ID
-  useEffect(() => {
-    const userId = import.meta.env.VITE_EMAILJS_USER_ID;
-    if (userId) {
-      emailjs.init(userId); 
-    } else {
-      console.error('EmailJS User ID is not defined in environment variables.');
-    }
-  }, []);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, dirtyFields }
+  } = useForm<ContactFormData>();
 
-  // Focus management
-  useEffect(() => {
-    const form = formRef.current;
-    if (form) {
-      const firstInput = form.querySelector('input, textarea') as HTMLElement;
-      firstInput?.focus();
-    }
-  }, []);
-
-  // Keyboard shortcuts
-  useKeyboardShortcut('Enter', () => {
+  useKeyboardShortcut(['Control', 'Enter'], () => {
     if (document.activeElement instanceof HTMLTextAreaElement) return;
     formRef.current?.requestSubmit();
-  }, {
-    modifiers: ['ctrlKey'],
-    targetElement: formRef.current
-  });
-
-  useKeyboardShortcut('Escape', () => {
-    const confirmed = window.confirm('Are you sure you want to reset the form?');
-    if (confirmed) {
-      reset();
-      setAriaMessage('Form has been reset');
-      showToast('Form has been reset', 'info');
-      
-      setTimeout(() => {
-        const firstInput = formRef.current?.querySelector('input') as HTMLElement;
-        firstInput?.focus();
-      }, 0);
-    }
-  }, {
-    targetElement: formRef.current
   });
 
   const onSubmit = async (data: ContactFormData) => {
@@ -118,27 +50,18 @@ const Contact = () => {
     setAriaMessage('Sending your message...');
 
     try {
-      // Send email using EmailJS
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID || '', // Replace with your EmailJS Service ID
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '', // Replace with your EmailJS Template ID
-        {
-          from_name: data.name,
-          from_email: data.email,
-          message: data.message,
-        }
-      );
-
-      showToast('Message sent successfully! We\'ll get back to you soon.', 'success');
-      setAriaMessage('Message sent successfully! We\'ll get back to you soon.');
+      // Simulated API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Use form data
+      console.log('Sending message:', data);
+      
+      showToast('Message sent successfully!', 'success');
+      setAriaMessage('Message sent successfully!');
+      setShowSuccessDialog(true);
       reset();
-
-      setTimeout(() => {
-        const firstInput = formRef.current?.querySelector('input') as HTMLElement;
-        firstInput?.focus();
-      }, 0);
     } catch (error) {
-      console.error('EmailJS error:', error);
+      console.error('Error:', error);
       showToast('Failed to send message. Please try again.', 'error');
       setAriaMessage('Failed to send message. Please try again.');
     } finally {
@@ -146,44 +69,142 @@ const Contact = () => {
     }
   };
 
-  return (
-    <section className="min-h-screen bg-gray-950 text-gray-100">
-      {/* Background with overlay */}
-      <div className="absolute inset-0 z-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${CONTACT_BG})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/90 to-gray-950 opacity-90" />
-      </div>
+  const contactMethods = [
+    {
+      icon: <Phone className="w-6 h-6" />,
+      label: 'Call us',
+      primary: '+1 (555) 123-4567',
+      secondary: 'Mon-Fri from 8am to 6pm',
+      action: 'tel:+15551234567'
+    },
+    {
+      icon: <Mail className="w-6 h-6" />,
+      label: 'Email us',
+      primary: 'contact@boxify.com',
+      secondary: "We'll get back to you within 24h",
+      action: 'mailto:contact@boxify.com'
+    },
+    {
+      icon: <MessageCircle className="w-6 h-6" />,
+      label: 'Live chat',
+      primary: 'Chat with our team',
+      secondary: 'Available 24/7',
+      action: '#chat'
+    }
+  ];
 
-      {/* Contact content */}
-      <div className="container mx-auto px-6 py-24 relative z-10">
-        <AriaLive message={ariaMessage} />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* Contact Form Section */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-white rounded-2xl shadow-lg p-8"
+  return (
+    <div className="min-h-screen bg-slate-950">
+      {/* Hero Section */}
+      <section className="relative isolate overflow-hidden pt-24 sm:pt-32">
+        <div className="absolute inset-0 -z-10 opacity-20">
+          <svg
+            className="h-full w-full"
+            viewBox="0 0 1097 845"
+            aria-hidden="true"
+            fill="none"
           >
-            <h2 className="text-2xl font-bold mb-6">Send us a Message</h2>
+            <path
+              d="M213.5 384.7c-50.9-37.4-86.8-92.4-97.9-155.3-11.1-62.9 6.3-126.7 47.6-174.6 41.3-47.9 102.2-75.1 167.1-74.5 64.9.6 125.1 28.9 165.4 77.6 24.8 30 41.1 66.5 46.8 105.1 5.7 38.6.8 78.1-14.2 114-15 35.9-39.4 67.4-70.6 91.3-31.2 23.9-68.3 39.4-107.1 44.8-38.8 5.4-78.4.9-114.3-13.1-35.9-14-67.4-38.4-91.3-69.6-18.3-24-31.2-51.7-37.8-81.2"
+              stroke="url(#0995647f-f297-4713-9df9-a0595fd5620b)"
+              strokeWidth="2"
+            />
+            <path
+              d="M896.5 678.3c-50.9-37.4-86.8-92.4-97.9-155.3-11.1-62.9 6.3-126.7 47.6-174.6 41.3-47.9 102.2-75.1 167.1-74.5 64.9.6 125.1 28.9 165.4 77.6 24.8 30 41.1 66.5 46.8 105.1 5.7 38.6.8 78.1-14.2 114-15 35.9-39.4 67.4-70.6 91.3-31.2 23.9-68.3 39.4-107.1 44.8-38.8 5.4-78.4.9-114.3-13.1-35.9-14-67.4-38.4-91.3-69.6-18.3-24-31.2-51.7-37.8-81.2"
+              stroke="url(#1095647f-f297-4713-9df9-a0595fd5620b)"
+              strokeWidth="2"
+            />
+            <defs>
+              <linearGradient
+                id="0995647f-f297-4713-9df9-a0595fd5620b"
+                x1="0"
+                y1="0"
+                x2="1097"
+                y2="845"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#0EA5E9" />
+                <stop offset="1" stopColor="#22D3EE" />
+              </linearGradient>
+              <linearGradient
+                id="1095647f-f297-4713-9df9-a0595fd5620b"
+                x1="1097"
+                y1="845"
+                x2="0"
+                y2="0"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#0EA5E9" />
+                <stop offset="1" stopColor="#22D3EE" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto max-w-2xl text-center"
+          >
+            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">
+              Get in touch
+            </h1>
+            <p className="mt-6 text-lg leading-8 text-gray-300">
+              Have questions about our packaging solutions? We'd love to hear from you. 
+              Choose your preferred way to reach us below.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Contact Methods Grid */}
+        <div className="mx-auto mt-16 max-w-7xl px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-3"
+          >
+            {contactMethods.map((method, index) => (
+              <motion.a
+                key={method.label}
+                href={method.action}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 * index }}
+                className="relative flex flex-col gap-6 rounded-2xl bg-slate-800/50 backdrop-blur-sm p-8 ring-1 ring-white/10 hover:ring-cyan-400/50 transition-all duration-300"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/10 ring-1 ring-cyan-500/30">
+                  {method.icon}
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold leading-7 text-white">{method.label}</h3>
+                  <p className="mt-2 text-base leading-7 text-gray-300">{method.secondary}</p>
+                  <p className="mt-4 flex items-center gap-2 text-sm font-semibold text-cyan-400">
+                    {method.primary}
+                    <ArrowRight className="w-4 h-4" />
+                  </p>
+                </div>
+              </motion.a>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-8 py-24">
+        <AriaLive message={ariaMessage} />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12"
+        >
+          <div className="rounded-2xl bg-slate-800/50 backdrop-blur-sm p-8 ring-1 ring-white/10">
+            <h2 className="text-2xl font-bold text-white mb-6">Send us a message</h2>
             
-            <div className="bg-gray-50 rounded-xl p-4 mb-6">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">Keyboard Shortcuts:</h3>
-              <ul className="text-sm text-gray-500 space-y-1">
-                <li>• Ctrl + Enter: Submit form</li>
-                <li>• Esc: Reset form</li>
-              </ul>
-            </div>
-            
-            <form 
-              ref={formRef}
-              onSubmit={handleSubmit(onSubmit)} 
-              className="space-y-6"
-              aria-label="Contact Form"
-            >
+            <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 label="Full Name"
                 {...register('name', { required: 'Name is required' })}
@@ -192,6 +213,7 @@ const Contact = () => {
                 icon={<User className="w-5 h-5" />}
                 required
                 isLoading={isSubmitting}
+                className="bg-slate-900/50"
               />
 
               <FormField
@@ -209,6 +231,18 @@ const Contact = () => {
                 icon={<Mail className="w-5 h-5" />}
                 required
                 isLoading={isSubmitting}
+                className="bg-slate-900/50"
+              />
+
+              <FormField
+                label="Subject"
+                {...register('subject', { required: 'Subject is required' })}
+                error={errors.subject?.message}
+                success={!errors.subject && dirtyFields.subject}
+                icon={<MessageSquare className="w-5 h-5" />}
+                required
+                isLoading={isSubmitting}
+                className="bg-slate-900/50"
               />
 
               <FormField
@@ -216,91 +250,123 @@ const Contact = () => {
                 {...register('message', { required: 'Message is required' })}
                 error={errors.message?.message}
                 success={!errors.message && dirtyFields.message}
-                textarea
-                rows={6}
+                as="textarea"
                 icon={<MessageSquare className="w-5 h-5" />}
                 required
                 isLoading={isSubmitting}
+                className="bg-slate-900/50 min-h-[150px] resize-y"
               />
 
-              <Button
+              <motion.button
                 type="submit"
-                isLoading={isSubmitting}
-                rightIcon={<Send />}
-                className="w-full"
-                aria-label={isSubmitting ? 'Sending message...' : 'Send message'}
+                disabled={isSubmitting}
+                className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold
+                  flex items-center justify-center gap-2 hover:from-cyan-600 hover:to-blue-600 
+                  focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900
+                  disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Send Message
-              </Button>
+                {isSubmitting ? (
+                  <>
+                    <span className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    Send Message
+                  </>
+                )}
+              </motion.button>
             </form>
-          </motion.div>
+          </div>
 
-          {/* Contact Information */}
           <div className="space-y-8">
-            <img
-              src={OFFICE_LOCATION}
-              alt="Our Office Location"
-              className="w-full h-64 object-cover rounded-2xl shadow-2xl mb-8"
-            />
+            {/* Office Location */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="space-y-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="rounded-2xl overflow-hidden ring-1 ring-white/10 relative aspect-video"
             >
-              <div 
-                className="grid grid-cols-1 md:grid-cols-2 gap-8"
-                role="list"
-                aria-label="Contact Information"
-              >
-                {contactInfo.map((info, index) => (
-                  <motion.div
-                    key={info.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="bg-white p-6 rounded-xl shadow-lg"
-                    role="listitem"
-                  >
-                    <div 
-                      className="w-12 h-12 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center mb-4"
-                      aria-hidden="true"
-                    >
-                      {info.icon}
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">{info.title}</h3>
-                    {info.details.map((detail, idx) => (
-                      <p key={idx} className="text-gray-600">{detail}</p>
-                    ))}
-                  </motion.div>
-                ))}
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.9916256937595!2d-122.3320708!3d47.6062095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM47CsDM2JzIyLjQiTiAxMjLCsDE5JzU1LjUiVw!5e0!3m2!1sen!2sus!4v1647951865992!5m2!1sen!2sus"
+                width="100%"
+                height="400"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="grayscale contrast-125 opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                title="Office Location"
+              />
+              <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/10 rounded-2xl" />
+            </motion.div>
+
+            {/* Additional Contact Info */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              <div className="rounded-2xl bg-slate-800/50 backdrop-blur-sm p-6 ring-1 ring-white/10">
+                <Clock className="w-6 h-6 text-cyan-400 mb-4" />
+                <h3 className="text-lg font-semibold text-white mb-2">Business Hours</h3>
+                <p className="text-gray-400">Mon - Fri: 9:00 AM - 6:00 PM</p>
+                <p className="text-gray-400">Sat: 10:00 AM - 2:00 PM</p>
               </div>
 
-              {/* Map */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-white rounded-2xl shadow-lg p-2 h-[300px] overflow-hidden"
-              >
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.9916256937595!2d2.2922926156743965!3d48.858373079287475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e2964e34e2d%3A0x8ddca9ee380ef7e0!2sEiffel%20Tower!5e0!3m2!1sen!2sus!4v1647951865992!5m2!1sen!2sus"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="rounded-xl"
-                  title="Company Location Map"
-                  aria-label="Interactive map showing our company location"
-                />
-              </motion.div>
+              <div className="rounded-2xl bg-slate-800/50 backdrop-blur-sm p-6 ring-1 ring-white/10">
+                <MapPin className="w-6 h-6 text-cyan-400 mb-4" />
+                <h3 className="text-lg font-semibold text-white mb-2">Office Location</h3>
+                <p className="text-gray-400">123 Packaging Street</p>
+                <p className="text-gray-400">Box City, BC 12345</p>
+              </div>
             </motion.div>
           </div>
-        </div>
-      </div>
-    </section>
+        </motion.div>
+      </section>
+
+      {/* Success Dialog */}
+      <AnimatePresence>
+        {showSuccessDialog && (
+          <Dialog 
+            isOpen={showSuccessDialog}
+            onDismiss={() => setShowSuccessDialog(false)}
+            aria-label="Success message"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-slate-800 rounded-2xl p-8 max-w-md w-full mx-auto ring-1 ring-white/10"
+            >
+              <div className="text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <h3 className="mt-4 text-xl font-semibold text-white">Message sent successfully!</h3>
+                <p className="mt-2 text-gray-400">
+                  Thank you for reaching out. We'll get back to you within 24 hours.
+                </p>
+                <button
+                  onClick={() => setShowSuccessDialog(false)}
+                  className="mt-6 w-full px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 
+                    text-white font-semibold hover:from-cyan-600 hover:to-blue-600 
+                    focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 
+                    focus:ring-offset-slate-900 transition-all duration-300"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </Dialog>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

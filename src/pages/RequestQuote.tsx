@@ -33,13 +33,6 @@ const RequestQuote = () => {
 
   const steps = useMemo(() => ['Personal Details', 'Product Details', 'Customization'], []);
 
-  // Add step descriptions for better UX
-  const stepDescriptions = useMemo(() => ({
-    'Personal Details': 'Help us know who you are',
-    'Product Details': 'Tell us about your packaging needs',
-    'Customization': 'Customize your packaging solution'
-  }), []);
-
   const {
     register,
     handleSubmit,
@@ -166,63 +159,51 @@ const RequestQuote = () => {
       <div className="container mx-auto px-6 py-24 relative z-10">
         <AriaLive message={ariaMessage} />
         
-        <div className="max-w-4xl mx-auto">
+        <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-teal-400">Request a Quote</h1>
-            <p className="text-xl text-gray-300">
+            <h1 className="text-4xl font-bold text-center mb-4 text-teal-400">Request a Quote</h1>
+            <p className="text-gray-300 text-center mb-8 text-lg">
               Fill out the form below to get a custom quote for your packaging needs.
               Our team will get back to you within 24 hours.
             </p>
-          </motion.div>
 
-          {/* Progress Steps */}
-          <div className="flex justify-between mb-12 relative">
-            {steps.map((step, index) => (
-              <motion.div
-                key={index}
-                className="flex flex-col items-center relative z-10"
-                initial={false}
-                animate={{
-                  scale: currentStep >= index ? 1.1 : 1,
-                  opacity: currentStep >= index ? 1 : 0.5
-                }}
-              >
-                <div 
-                  className={`w-12 h-12 rounded-full flex items-center justify-center mb-3
-                    ${currentStep >= index ? 'bg-teal-500 text-gray-900' : 'bg-gray-800 text-gray-400'}
-                    transition-all duration-300 ease-in-out transform
-                    ${currentStep === index ? 'ring-4 ring-teal-500/30' : ''}`}
+            {/* Progress Steps */}
+            <div className="flex justify-between mb-8 relative">
+              {steps.map((step, index) => (
+                <motion.div
+                  key={index}
+                  className="flex flex-col items-center relative z-10"
+                  initial={false}
+                  animate={{
+                    scale: currentStep >= index ? 1.1 : 1,
+                    opacity: currentStep >= index ? 1 : 0.5
+                  }}
                 >
-                  {index + 1}
-                </div>
-                <span className="text-sm font-medium mb-1">{step}</span>
-                <span className="text-xs text-gray-400">{stepDescriptions[step]}</span>
-              </motion.div>
-            ))}
-            
-            {/* Progress Line */}
-            <div className="absolute top-6 left-0 h-0.5 bg-gray-800 w-full -z-10" />
-            <motion.div
-              className="absolute top-6 left-0 h-0.5 bg-teal-500"
-              initial={{ width: '0%' }}
-              animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 
+                    ${currentStep >= index ? 'bg-teal-500 text-gray-900' : 'bg-gray-700 text-gray-300'}`}>
+                    {index + 1}
+                  </div>
+                  <span className="text-sm">{step}</span>
+                </motion.div>
+              ))}
+              
+              {/* Progress Line */}
+              <div className="absolute top-4 left-0 h-0.5 bg-gray-700 w-full -z-10" />
+              <motion.div
+                className="absolute top-4 left-0 h-0.5 bg-teal-500"
+                initial={{ width: '0%' }}
+                animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
 
-          {/* Form Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-gray-900/60 backdrop-blur-lg rounded-2xl p-8 border border-gray-800 shadow-2xl"
-          >
-            <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Form Content */}
+            <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700 shadow-xl">
               <AnimatePresence mode="wait">
                 {currentStep === 0 && (
                   <motion.div
