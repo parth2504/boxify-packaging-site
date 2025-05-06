@@ -1,11 +1,10 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Quote } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Quote } from 'lucide-react';
 
 interface Testimonial {
   id: number;
@@ -18,38 +17,38 @@ interface Testimonial {
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: 'Sarah Johnson',
-    company: 'EcoShop Direct',
-    text: 'The quality of their custom boxes exceeded our expectations. Our products now arrive safely and look amazing!',
-    image: 'https://placehold.co/100x100/1a202c/e2e8f0?text=SJ' // Placeholder image
+    name: 'John Smith',
+    company: 'Tech Solutions Inc.',
+    text: 'The quality and attention to detail in their packaging solutions exceeded our expectations.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'
   },
   {
     id: 2,
-    name: 'Michael Chen',
-    company: 'Tech Innovations',
-    text: 'Their sustainable packaging solutions helped us reduce our carbon footprint while maintaining premium quality.',
-    image: 'https://placehold.co/100x100/1a202c/e2e8f0?text=MC' // Placeholder image
+    name: 'Maria Chen',
+    company: 'Eco Store',
+    text: 'Their sustainable packaging options helped us reduce our environmental impact significantly.',
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200'
   },
   {
     id: 3,
     name: 'Emma Davis',
     company: 'Artisan Foods',
     text: 'The food-grade packaging is perfect for our gourmet products. Customer service has been exceptional!',
-    image: 'https://placehold.co/100x100/1a202c/e2e8f0?text=ED' // Placeholder image
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200'
   },
-   {
+  {
     id: 4,
     name: 'David Lee',
     company: 'Creative Goods',
     text: 'Boxify made the design process so easy. The final product perfectly captures our brand.',
-    image: 'https://placehold.co/100x100/1a202c/e2e8f0?text=DL' // Placeholder image
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200'
   },
-   {
+  {
     id: 5,
     name: 'Olivia Wilson',
     company: 'Pet Supply Co.',
-    text: 'Reliable delivery and sturdy boxes. Our pet products arrive in perfect condition every time.',
-    image: 'https://placehold.co/100x100/1a202c/e2e8f0?text=OW' // Placeholder image
+    text: 'The durability of their packaging ensures our products arrive safely every time.',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'
   }
 ];
 

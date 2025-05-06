@@ -22,37 +22,22 @@ const products = [
     id: 1,
     name: 'Custom Shipping Boxes',
     description: 'Durable corrugated boxes designed for safe product delivery.',
-    image: '/src/assets/images/products/shipping-box.jpg', // Replace with actual public URL or placeholder
-    price: 'Starting at $1.99/unit',
-    category: 'Shipping',
-    features: ['Custom sizes', 'Strong & durable', 'Brand customization']
+    image: 'https://images.unsplash.com/photo-1595079676601-f1adf5be5dee?auto=format&fit=crop&q=80&w=800',
+    features: ['Custom sizes', 'Brand printing', 'Eco-friendly materials']
   },
   {
     id: 2,
-    name: 'Retail Display Boxes',
-    description: 'Eye-catching retail packaging that enhances product presentation.',
-    image: '/src/assets/images/products/retail-box.jpg', // Replace with actual public URL or placeholder
-    price: 'Starting at $2.49/unit',
-    category: 'Retail',
-    features: ['Premium finish', 'Window options', 'Stackable design']
+    name: 'Retail Packaging',
+    description: 'Eye-catching retail boxes that enhance product presentation.',
+    image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800',
+    features: ['Premium finish', 'Window options', 'Various styles']
   },
   {
     id: 3,
-    name: 'Eco-Friendly Boxes',
-    description: 'Sustainable packaging solutions made from recycled materials.',
-    image: '/src/assets/images/products/eco-box.jpg', // Replace with actual public URL or placeholder
-    price: 'Starting at $2.99/unit',
-    category: 'Eco-Friendly',
-    features: ['100% recyclable', 'Biodegradable', 'Minimal waste']
-  },
-  {
-    id: 4,
-    name: 'Gift Boxes',
-    description: 'Elegant gift boxes perfect for special occasions.',
-    image: '/src/assets/images/products/gift-box.jpg', // Replace with actual public URL or placeholder
-    price: 'Starting at $3.49/unit',
-    category: 'Specialty',
-    features: ['Luxury finish', 'Multiple sizes', 'Custom inserts']
+    name: 'Food Packaging',
+    description: 'Food-grade packaging solutions for maximum freshness.',
+    image: 'https://images.unsplash.com/photo-1606755456206-b25206cde27e?auto=format&fit=crop&q=80&w=800',
+    features: ['FDA approved', 'Moisture resistant', 'Temperature safe']
   }
 ];
 

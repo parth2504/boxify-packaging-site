@@ -58,6 +58,10 @@ const contactInfo = [
   }
 ];
 
+// Add contact page background and location images
+const CONTACT_BG = 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000';
+const OFFICE_LOCATION = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800';
+
 const Contact = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const { register, handleSubmit, formState: { errors, dirtyFields }, reset } = useForm<ContactFormData>();
@@ -143,105 +147,101 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20" role="main">
-      <AriaLive message={ariaMessage} />
-      
-      {/* Hero Section */}
-      <section className="relative py-20 bg-primary-900 text-white overflow-hidden" aria-label="Contact Header">
-        <div className="absolute inset-0 bg-[url('/src/assets/images/pattern.svg')] opacity-10" aria-hidden="true" />
-        <div className="container mx-auto px-4 relative">
+    <section className="min-h-screen bg-gray-950 text-gray-100">
+      {/* Background with overlay */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${CONTACT_BG})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/90 to-gray-950 opacity-90" />
+      </div>
+
+      {/* Contact content */}
+      <div className="container mx-auto px-6 py-24 relative z-10">
+        <AriaLive message={ariaMessage} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          {/* Contact Form Section */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto text-center"
+            className="bg-white rounded-2xl shadow-lg p-8"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Get In Touch</h1>
-            <p className="text-xl text-primary-100">
-              Have questions about our packaging solutions? We're here to help!
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="py-20" aria-label="Contact Information and Form">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="bg-white rounded-2xl shadow-lg p-8"
+            <h2 className="text-2xl font-bold mb-6">Send us a Message</h2>
+            
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <h3 className="text-sm font-medium text-gray-600 mb-2">Keyboard Shortcuts:</h3>
+              <ul className="text-sm text-gray-500 space-y-1">
+                <li>• Ctrl + Enter: Submit form</li>
+                <li>• Esc: Reset form</li>
+              </ul>
+            </div>
+            
+            <form 
+              ref={formRef}
+              onSubmit={handleSubmit(onSubmit)} 
+              className="space-y-6"
+              aria-label="Contact Form"
             >
-              <h2 className="text-2xl font-bold mb-6">Send us a Message</h2>
-              
-              <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">Keyboard Shortcuts:</h3>
-                <ul className="text-sm text-gray-500 space-y-1">
-                  <li>• Ctrl + Enter: Submit form</li>
-                  <li>• Esc: Reset form</li>
-                </ul>
-              </div>
-              
-              <form 
-                ref={formRef}
-                onSubmit={handleSubmit(onSubmit)} 
-                className="space-y-6"
-                aria-label="Contact Form"
+              <FormField
+                label="Full Name"
+                {...register('name', { required: 'Name is required' })}
+                error={errors.name?.message}
+                success={!errors.name && dirtyFields.name}
+                icon={<User className="w-5 h-5" />}
+                required
+                isLoading={isSubmitting}
+              />
+
+              <FormField
+                label="Email"
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address'
+                  }
+                })}
+                type="email"
+                error={errors.email?.message}
+                success={!errors.email && dirtyFields.email}
+                icon={<Mail className="w-5 h-5" />}
+                required
+                isLoading={isSubmitting}
+              />
+
+              <FormField
+                label="Message"
+                {...register('message', { required: 'Message is required' })}
+                error={errors.message?.message}
+                success={!errors.message && dirtyFields.message}
+                textarea
+                rows={6}
+                icon={<MessageSquare className="w-5 h-5" />}
+                required
+                isLoading={isSubmitting}
+              />
+
+              <Button
+                type="submit"
+                isLoading={isSubmitting}
+                rightIcon={<Send />}
+                className="w-full"
+                aria-label={isSubmitting ? 'Sending message...' : 'Send message'}
               >
-                <FormField
-                  label="Full Name"
-                  {...register('name', { required: 'Name is required' })}
-                  error={errors.name?.message}
-                  success={!errors.name && dirtyFields.name}
-                  icon={<User className="w-5 h-5" />}
-                  required
-                  isLoading={isSubmitting}
-                />
+                Send Message
+              </Button>
+            </form>
+          </motion.div>
 
-                <FormField
-                  label="Email"
-                  {...register('email', {
-                    required: 'Email is required',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address'
-                    }
-                  })}
-                  type="email"
-                  error={errors.email?.message}
-                  success={!errors.email && dirtyFields.email}
-                  icon={<Mail className="w-5 h-5" />}
-                  required
-                  isLoading={isSubmitting}
-                />
-
-                <FormField
-                  label="Message"
-                  {...register('message', { required: 'Message is required' })}
-                  error={errors.message?.message}
-                  success={!errors.message && dirtyFields.message}
-                  textarea
-                  rows={6}
-                  icon={<MessageSquare className="w-5 h-5" />}
-                  required
-                  isLoading={isSubmitting}
-                />
-
-                <Button
-                  type="submit"
-                  isLoading={isSubmitting}
-                  rightIcon={<Send />}
-                  className="w-full"
-                  aria-label={isSubmitting ? 'Sending message...' : 'Send message'}
-                >
-                  Send Message
-                </Button>
-              </form>
-            </motion.div>
-
-            {/* Contact Information */}
+          {/* Contact Information */}
+          <div className="space-y-8">
+            <img
+              src={OFFICE_LOCATION}
+              alt="Our Office Location"
+              className="w-full h-64 object-cover rounded-2xl shadow-2xl mb-8"
+            />
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -299,8 +299,8 @@ const Contact = () => {
             </motion.div>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 };
 

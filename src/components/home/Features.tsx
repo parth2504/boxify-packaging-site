@@ -1,52 +1,42 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
-  Package,
-  Recycle,
-  Truck,
+  ChevronRight,
+  Settings as CustomizeIcon,
+  Leaf,
   Shield,
-  Clock,
-  Star,
-  ChevronRight
+  Clock
 } from 'lucide-react';
 import { Link } from 'react-router-dom'; // Assuming react-router-dom is used for navigation
 
 const features = [
   {
-    icon: <Package className="w-8 h-8" />,
-    title: 'Custom Packaging',
-    description: 'Tailored solutions designed to perfectly fit your product and brand identity.',
-    link: '/products#custom'
+    id: 1,
+    title: 'Custom Design',
+    description: 'Tailor-made packaging solutions that perfectly match your brand identity.',
+    image: 'https://images.unsplash.com/photo-1586528116493-d795f2095332?auto=format&fit=crop&q=80&w=800',
+    icon: CustomizeIcon
   },
   {
-    icon: <Recycle className="w-8 h-8" />,
+    id: 2,
     title: 'Eco-Friendly Materials',
     description: 'Sustainable packaging options that help reduce environmental impact.',
-    link: '/products#eco'
+    image: 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&q=80&w=800',
+    icon: Leaf
   },
   {
-    icon: <Truck className="w-8 h-8" />,
-    title: 'Fast Delivery',
-    description: 'Quick turnaround times and reliable shipping to meet your deadlines.',
-    link: '/products#shipping'
-  },
-  {
-    icon: <Shield className="w-8 h-8" />,
+    id: 3,
     title: 'Quality Assurance',
-    description: 'Rigorous testing and premium materials for superior protection.',
-    link: '/products#quality'
+    description: 'Rigorous testing ensures your products arrive safely every time.',
+    image: 'https://images.unsplash.com/photo-1598343672916-de13ab0636ed?auto=format&fit=crop&q=80&w=800',
+    icon: Shield
   },
   {
-    icon: <Clock className="w-8 h-8" />,
-    title: '24/7 Support',
-    description: 'Round-the-clock customer service to assist you anytime.',
-    link: '/contact'
-  },
-  {
-    icon: <Star className="w-8 h-8" />,
-    title: 'Premium Design',
-    description: 'Eye-catching designs that enhance your brand presentation.',
-    link: '/products#design'
+    id: 4,
+    title: 'Fast Turnaround',
+    description: 'Quick production and delivery to meet your business needs.',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800',
+    icon: Clock
   }
 ];
 
@@ -103,20 +93,20 @@ const Features = () => {
           animate={inView ? "visible" : "hidden"} // Animate based on inView status
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <motion.div
-              key={feature.title}
+              key={feature.id}
               variants={cardItemVariants}
               whileHover={{ scale: 1.03, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.2)" }} // Enhanced hover effect
               transition={{ duration: 0.3 }}
               className="relative bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-700" // Updated card styles
             >
-              {/* Feature Icon */}
-              <motion.div
-                className="w-14 h-14 rounded-full bg-teal-500/15 text-teal-400 flex items-center justify-center mb-6" // Updated icon container style
-              >
-                {feature.icon}
-              </motion.div>
+              {/* Feature Image */}
+              <img
+                src={feature.image}
+                alt={feature.title}
+                className="w-full h-40 object-cover rounded-t-2xl mb-6"
+              />
 
               {/* Feature Content */}
               <h3 className="text-xl font-semibold mb-3 text-gray-100">{feature.title}</h3> {/* Updated text color */}
@@ -124,7 +114,7 @@ const Features = () => {
 
               {/* Learn More Link */}
               <Link
-                to={feature.link}
+                to="#"
                 className="inline-flex items-center text-teal-400 font-medium hover:text-teal-500 transition-colors duration-200" // Updated link color
               >
                 Learn More

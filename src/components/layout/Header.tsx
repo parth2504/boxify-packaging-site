@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, Package, X } from 'lucide-react';
 
+// Video background URL
+const HERO_VIDEO = 'https://static.videezy.com/system/resources/previews/000/021/644/original/boxes-background-loop.mp4';
+const HEADER_BG = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=2000';
+
 const navigation = [
   { name: 'Home', path: '/' },
   { name: 'Products', path: '/products' },
@@ -24,12 +28,18 @@ const Header = () => {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-light shadow-lg' : 'bg-transparent'
-      }`}
-    >
-      <nav className="container mx-auto px-4">
+    <header className="fixed top-0 left-0 right-0 z-50">
+      {/* Video Background with Fallback Image */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/90 to-transparent" />
+      </div>
+
+      <nav
+        className={`relative container mx-auto px-4 z-10 transition-all duration-300 ${
+          isScrolled ? 'bg-light shadow-lg' : 'bg-transparent'
+        }`}
+      >
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">

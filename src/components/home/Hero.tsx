@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
 import { ArrowRight, Box, Shield, Truck } from 'lucide-react';
-import { Link } from 'react-router-dom'; // Assuming react-router-dom is used for navigation
+import { Link } from 'react-router-dom';
+
+// Add high-quality image URLs
+const HERO_BG = 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=2000';
 
 const Hero = () => {
   // Animation variants for staggered appearance of text content
@@ -26,45 +29,41 @@ const Hero = () => {
 
   // Variants for the floating elements animation
   const floatingElementVariants = {
-    animate: (i: number) => ({ // Use a function to access the index passed via custom prop
-      y: [-20, 20], // Vertical floating motion
-      x: [-15 + i * 15, 15 + i * 15], // Subtle horizontal drift based on index
-      rotate: [0, 360], // Continuous rotation
-      opacity: [0.6, 1, 0.6], // Subtle opacity pulse
+    initial: { opacity: 0 },
+    animate: {
+      y: [-20, 20],
+      x: [-15, 15],
+      rotate: [0, 360],
+      opacity: [0.6, 1, 0.6],
       transition: {
-        duration: 5, // Duration of one animation cycle
-        repeat: Infinity, // Repeat indefinitely
-        repeatType: 'reverse', // Reverse the animation each cycle
-        ease: 'easeInOut', // Smooth easing
-        delay: i * 0.7, // Stagger the start of each floating element's animation
-      },
-    }),
+        duration: 5,
+        repeat: Infinity,
+        repeatType: "mirror" as const,
+        ease: "easeInOut"
+      }
+    }
   };
 
   // Variants for the diagonal line animation
   const diagonalLineVariants = {
     hidden: { height: 0, opacity: 0 }, // Start with no height and hidden
-    visible: { height: '100%', opacity: 1, transition: { duration: 1.5, ease: 'easeOut', delay: 0.6 } }, // Animate height and fade in
-    animate: { // Continuous subtle animation after entry
-        y: [0, -10, 0],
-        opacity: [1, 0.8, 1],
-        transition: {
-            duration: 8,
-            repeat: Infinity,
-            repeatType: 'reverse',
-            ease: 'easeInOut',
-        }
+    visible: { 
+      height: '100%', 
+      opacity: 1, 
+      transition: { duration: 1.5, ease: 'easeOut', delay: 0.6 } 
     }
   };
-
 
   return (
     <section className="relative min-h-screen bg-gray-950 text-gray-100 overflow-hidden flex items-center">
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0">
-        {/* Subtle gradient overlay */}
+        {/* High-quality background image with overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${HERO_BG})` }}
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/90 to-gray-950 opacity-90" />
-        {/* More prominent background pattern */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/clean-gray-paper.png')] opacity-[0.03]" />
       </div>
 
@@ -124,11 +123,11 @@ const Hero = () => {
                 { icon: <Box size={24} />, text: 'Custom Sizes & Designs' },
                 { icon: <Shield size={24} />, text: 'Superior Quality Materials' },
                 { icon: <Truck size={24} />, text: 'Reliable & Fast Delivery' }
-              ].map((feature, index) => (
+              ].map((feature) => (
                 <motion.div
                   key={feature.text}
                   variants={itemVariants}
-                  className="flex items-start space-x-4" // Changed to items-start for better alignment
+                  className="flex items-start space-x-4"
                 >
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-teal-500/10 text-teal-400 flex items-center justify-center">
                     {feature.icon}
@@ -148,14 +147,6 @@ const Hero = () => {
             animate="visible" // Animate when the component mounts
             className="relative flex items-center justify-center" // Use flex to center content
           >
-            {/* Main Image Container (Optional: Keep if you still want an image) */}
-            {/* <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-               <img
-                src="https://placehold.co/600x400/1a202c/e2e8f0?text=Premium+Packaging"
-                alt="Premium packaging boxes"
-                className="w-full h-auto object-cover"
-              />
-            </div> */}
 
             {/* Floating Elements Container */}
             <div className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center"> {/* Container for floating elements, higher z-index, centered */}
@@ -163,7 +154,6 @@ const Hero = () => {
                 <motion.div
                   className="absolute w-16 h-16 text-teal-400 opacity-70" // Position and style
                   style={{ top: '20%', left: '25%' }} // Example positioning
-                  custom={0} // Pass index 0
                   variants={floatingElementVariants} // Apply floating animation variants
                   initial={{ opacity: 0 }} // Initial state before animation starts
                   animate="animate" // Start the infinite animation
@@ -175,7 +165,6 @@ const Hero = () => {
                 <motion.div
                   className="absolute w-12 h-12 text-gray-500 opacity-70" // Position and style
                    style={{ bottom: '25%', right: '20%' }} // Example positioning
-                   custom={1} // Pass index 1
                   variants={floatingElementVariants} // Apply floating animation variants
                   initial={{ opacity: 0 }} // Initial state before animation starts
                   animate="animate" // Start the infinite animation
@@ -187,7 +176,6 @@ const Hero = () => {
                  <motion.div
                   className="absolute w-10 h-10 text-teal-600 opacity-70" // Position and style
                   style={{ top: '30%', right: '30%' }} // Example positioning
-                   custom={2} // Pass index 2
                   variants={floatingElementVariants} // Apply floating animation variants
                    initial={{ opacity: 0 }} // Initial state before animation starts
                   animate="animate" // Start the infinite animation

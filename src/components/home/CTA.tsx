@@ -10,6 +10,9 @@ const benefits = [
   'Fast turnaround times'
 ];
 
+// Add background image URL at the top
+const CTA_BG = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=2000';
+
 const CTA = () => {
   // Ref for the section to track scroll progress
   const containerRef = useRef<HTMLDivElement>(null);
@@ -61,7 +64,12 @@ const CTA = () => {
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0">
-         {/* Subtle gradient overlay */}
+        {/* High-quality background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${CTA_BG})` }}
+        />
+        {/* Overlay gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/90 to-gray-950 opacity-90" />
         {/* More prominent background pattern with subtle animation */}
         <motion.div
