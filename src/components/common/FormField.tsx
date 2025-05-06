@@ -1,165 +1,136 @@
-import { InputHTMLAttributes, ReactNode, forwardRef, ElementType, ComponentPropsWithRef, ChangeEvent } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { forwardRef, ReactNode, ComponentPropsWithoutRef } from 'react';
+import { motion } from 'framer-motion';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
 
-type ElementProps<T extends ElementType> = ComponentPropsWithRef<T>;
-
-type BaseInputProps = InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
-
-interface FormFieldProps extends Omit<BaseInputProps, 'ref'> {
+interface FormFieldProps extends ComponentPropsWithoutRef<'input'> {
   label: string;
   error?: string;
-  textarea?: boolean;
-  as?: 'input' | 'textarea' | 'select';
   success?: boolean;
-  icon?: ReactNode;
   isLoading?: boolean;
-  children?: React.ReactNode;
-  rows?: number;
+  icon?: ReactNode;
+  as?: 'input' | 'textarea' | 'select';
+  helperText?: string;
+  required?: boolean;
 }
 
-const FormField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, FormFieldProps>(
-  ({ label, error, textarea, as = 'input', success, icon, isLoading, className = '', children, rows, onChange, ...props }, ref) => {    
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      if (onChange) {
-        if (as === 'select') {
-          onChange(e as ChangeEvent<HTMLSelectElement>);
-        } else if (textarea) {
-          onChange(e as ChangeEvent<HTMLTextAreaElement>);
-        } else {
-          onChange(e as ChangeEvent<HTMLInputElement>);
-        }
-      }
-    };
+const FormField = forwardRef<HTMLInputElement, FormFieldProps>(({
+  label,
+  error,
+  success,
+  isLoading,
+  icon,
+  as = 'input',
+  helperText,
+  className = '',
+  required,
+  ...props
+}, ref) => {
+  const id = props.id || props.name || label.toLowerCase().replace(/\s+/g, '-');
+  const Component = as;
 
-    return (
-      <div className="space-y-1">
-        <label className="block text-sm font-medium text-dark">
-          {label}
-          {props.required && <span className="text-red-500 ml-1">*</span>}
-        </label>
-        
-        <div className="relative">
-          {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-gray">
-              {icon}
-            </div>
+  const baseInputStyles = `
+    w-full px-4 py-3 bg-gray-900/50 rounded-lg
+    border text-gray-100 placeholder-gray-400
+    transition-all duration-200
+    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900
+    disabled:opacity-50 disabled:cursor-not-allowed
+  `;
+
+  const getInputStyles = () => {
+    if (error) {
+      return 'border-red-500 focus:border-red-500 focus:ring-red-500';
+    }
+    if (success) {
+      return 'border-green-500 focus:border-green-500 focus:ring-green-500';
+    }
+    return 'border-gray-700 focus:border-teal-500 focus:ring-teal-500 hover:border-gray-600';
+  };
+
+  return (
+    <div className="space-y-2">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-gray-200"
+      >
+        {label}
+        {required && (
+          <span className="text-red-500 ml-1" aria-hidden="true">*</span>
+        )}
+      </label>
+
+      <div className="relative">
+        {icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            {icon}
+          </div>
+        )}
+
+        <Component
+          {...props}
+          ref={ref as any}
+          id={id}
+          aria-invalid={error ? 'true' : undefined}
+          aria-describedby={`${id}-${error ? 'error' : 'helper'}`}
+          className={`
+            ${baseInputStyles}
+            ${getInputStyles()}
+            ${icon ? 'pl-10' : ''}
+            ${className}
+          `}
+        />
+
+        {/* Status Icons */}
+        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          {isLoading && (
+            <LoadingSpinner size={20} color="currentColor" />
           )}
-          
-          {as === 'select' ? (
-            <select
-              {...(props as ElementProps<'select'>)}
-              ref={ref as React.Ref<HTMLSelectElement>}
-              onChange={handleChange}
-              className={`
-                w-full px-4 py-2 rounded-lg border bg-light transition-all duration-200
-                ${icon ? 'pl-10' : ''}
-                ${error ? 'border-red-500 focus:ring-red-500' : 
-                  success ? 'border-primary focus:ring-primary' : 
-                  'border-dark-gray/20 focus:ring-primary'
-                }
-                ${isLoading ? 'bg-light/50 cursor-not-allowed' : ''}
-                focus:outline-none focus:ring-2 focus:ring-offset-0
-                disabled:opacity-60 disabled:cursor-not-allowed
-                placeholder-dark-gray/50
-                ${className}
-              `}
-              disabled={isLoading || props.disabled}
-              aria-invalid={error ? 'true' : 'false'}
-              aria-describedby={error ? `${props.name}-error` : undefined}
+          {!isLoading && error && (
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-red-500"
             >
-              {children}
-            </select>
-          ) : textarea ? (
-            <textarea
-              {...(props as ElementProps<'textarea'>)}
-              ref={ref as React.Ref<HTMLTextAreaElement>}
-              rows={rows}
-              onChange={handleChange}
-              className={`
-                w-full px-4 py-2 rounded-lg border bg-light transition-all duration-200
-                ${icon ? 'pl-10' : ''}
-                ${error ? 'border-red-500 focus:ring-red-500' : 
-                  success ? 'border-primary focus:ring-primary' : 
-                  'border-dark-gray/20 focus:ring-primary'
-                }
-                ${isLoading ? 'bg-light/50 cursor-not-allowed' : ''}
-                focus:outline-none focus:ring-2 focus:ring-offset-0
-                disabled:opacity-60 disabled:cursor-not-allowed
-                placeholder-dark-gray/50
-                ${className}
-              `}
-              disabled={isLoading || props.disabled}
-              aria-invalid={error ? 'true' : 'false'}
-              aria-describedby={error ? `${props.name}-error` : undefined}
-            />
-          ) : (
-            <input
-              {...props}
-              ref={ref as React.Ref<HTMLInputElement>}
-              onChange={handleChange}
-              className={`
-                w-full px-4 py-2 rounded-lg border bg-light transition-all duration-200
-                ${icon ? 'pl-10' : ''}
-                ${error ? 'border-red-500 focus:ring-red-500' : 
-                  success ? 'border-primary focus:ring-primary' : 
-                  'border-dark-gray/20 focus:ring-primary'
-                }
-                ${isLoading ? 'bg-light/50 cursor-not-allowed' : ''}
-                focus:outline-none focus:ring-2 focus:ring-offset-0
-                disabled:opacity-60 disabled:cursor-not-allowed
-                placeholder-dark-gray/50
-                ${className}
-              `}
-              disabled={isLoading || props.disabled}
-              aria-invalid={error ? 'true' : 'false'}
-              aria-describedby={error ? `${props.name}-error` : undefined}
-            />
+              <AlertCircle className="w-5 h-5" />
+            </motion.div>
           )}
-
-          <AnimatePresence>
-            {isLoading ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-primary"
-              >
-                <LoadingSpinner size={20} color="#00ADB5" />
-              </motion.div>
-            ) : (error || success) && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className={`absolute right-3 top-1/2 -translate-y-1/2
-                  ${error ? 'text-red-500' : 'text-primary'}`}
-              >
-                {error ? <AlertCircle className="w-5 h-5" /> : <CheckCircle className="w-5 h-5" />}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {!isLoading && success && (
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-green-500"
+            >
+              <CheckCircle className="w-5 h-5" />
+            </motion.div>
+          )}
         </div>
-
-        <AnimatePresence>
-          {error && (
-            <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="text-red-500 text-sm"
-              id={`${props.name}-error`}
-              role="alert"
-            >
-              {error}
-            </motion.p>
-          )}
-        </AnimatePresence>
       </div>
-    );
-  }
-);
+
+      {/* Error Message */}
+      {error && (
+        <motion.p
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          id={`${id}-error`}
+          className="text-sm text-red-500"
+          role="alert"
+        >
+          {error}
+        </motion.p>
+      )}
+
+      {/* Helper Text */}
+      {helperText && !error && (
+        <p
+          id={`${id}-helper`}
+          className="text-sm text-gray-400"
+        >
+          {helperText}
+        </p>
+      )}
+    </div>
+  );
+});
 
 FormField.displayName = 'FormField';
 

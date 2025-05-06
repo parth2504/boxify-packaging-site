@@ -3,10 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, Package, X } from 'lucide-react';
 
-// Video background URL
-const HERO_VIDEO = 'https://static.videezy.com/system/resources/previews/000/021/644/original/boxes-background-loop.mp4';
-const HEADER_BG = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=2000';
-
 const navigation = [
   { name: 'Home', path: '/' },
   { name: 'Products', path: '/products' },
@@ -20,7 +16,7 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -28,25 +24,20 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      {/* Video Background with Fallback Image */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/90 to-transparent" />
-      </div>
-
-      <nav
-        className={`relative container mx-auto px-4 z-10 transition-all duration-300 ${
-          isScrolled ? 'bg-light shadow-lg' : 'bg-transparent'
-        }`}
-      >
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
+        ${isScrolled ? 'bg-gray-950/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}
+      `}
+    >
+      <nav className="container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <Package className={`w-8 h-8 ${isScrolled ? 'text-dark' : 'text-light'}`} />
-            <span className={`ml-2 text-2xl font-bold ${isScrolled ? 'text-dark' : 'text-light'}`}>
-              Boxify
-            </span>
+          <Link 
+            to="/" 
+            className="flex items-center space-x-2 text-gray-100"
+          >
+            <Package className="w-8 h-8 text-teal-400" />
+            <span className="text-xl font-bold">Boxify</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -55,28 +46,36 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`text-sm font-medium transition-colors duration-200 ${
-                  isScrolled ? 'text-dark-gray hover:text-primary' : 'text-light hover:text-primary-200'
-                }`}
+                className="text-gray-300 hover:text-teal-400 transition-colors duration-200"
               >
                 {item.name}
               </Link>
             ))}
             <Link
               to="/request-quote"
-              className="px-6 py-2 bg-primary text-light rounded-full text-sm font-medium hover:bg-primary-600 transition-colors duration-300"
+              className="px-6 py-2.5 bg-teal-500 text-gray-900 rounded-full font-medium 
+                hover:bg-teal-600 transition-all duration-300 transform hover:-translate-y-0.5
+                focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
+                focus:ring-offset-gray-900"
             >
               Request Quote
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-dark-gray hover:bg-light/10 transition-colors"
+            className="md:hidden p-2 rounded-lg text-gray-300 hover:text-teal-400
+              focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </motion.button>
         </div>
 
         {/* Mobile Navigation */}
@@ -86,27 +85,42 @@ const Header = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden bg-light"
+              transition={{ duration: 0.2 }}
+              className="md:hidden bg-gray-900/95 backdrop-blur-md border-t border-gray-800"
             >
-              <div className="py-4 space-y-4">
+              <div className="py-4 px-6 space-y-3">
                 {navigation.map((item) => (
-                  <Link
+                  <motion.div
                     key={item.name}
-                    to={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block px-4 py-2 text-dark-gray hover:text-primary transition-colors duration-200"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    {item.name}
-                  </Link>
+                    <Link
+                      to={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block py-2 text-gray-300 hover:text-teal-400 
+                        transition-colors duration-200"
+                    >
+                      {item.name}
+                    </Link>
+                  </motion.div>
                 ))}
-                <Link
-                  to="/request-quote"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block mx-4 px-4 py-2 text-center bg-primary text-light rounded-lg hover:bg-primary-600 transition-colors duration-300"
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2, delay: 0.2 }}
                 >
-                  Request Quote
-                </Link>
+                  <Link
+                    to="/request-quote"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block w-full py-2.5 mt-4 bg-teal-500 text-gray-900 
+                      rounded-full font-medium text-center hover:bg-teal-600 
+                      transition-colors duration-200"
+                  >
+                    Request Quote
+                  </Link>
+                </motion.div>
               </div>
             </motion.div>
           )}

@@ -5,7 +5,7 @@ import { useToast } from '../context/ToastContext';
 import Button from '../components/common/Button';
 import FormField from '../components/common/FormField';
 import AriaLive from '../components/common/AriaLive';
-import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
+import {useKeyboardShortcut} from '../hooks/useKeyboardShortcut';
 import { 
   Phone, 
   Mail, 

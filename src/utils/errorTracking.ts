@@ -1,15 +1,14 @@
-interface ErrorEvent {
+interface ErrorDetails {
   message: string;
   stack?: string;
-  componentStack?: string;
-  timestamp: number;
-  url: string;
+  componentName?: string;
+  additionalInfo?: Record<string, any>;
 }
 
 class ErrorTracker {
   private static instance: ErrorTracker;
-  private errors: ErrorEvent[] = [];
-  private readonly maxErrors = 50;
+  private errors: ErrorDetails[] = [];
+  private readonly maxErrors = 100;
 
   private constructor() {
     this.setupGlobalHandlers();
@@ -22,77 +21,73 @@ class ErrorTracker {
     return ErrorTracker.instance;
   }
 
-  private setupGlobalHandlers() {
-    window.onerror = (message, url, line, column, error) => {
-      this.captureError({
-        message: `${message} (${line}:${column})`,
-        stack: error?.stack,
-        timestamp: Date.now(),
-        url: url || window.location.href
-      });
-      return false;
-    };
-
-    window.onunhandledrejection = (event) => {
-      this.captureError({
+  private setupGlobalHandlers(): void {
+    window.addEventListener('unhandledrejection', (event) => {
+      this.logError({
         message: `Unhandled Promise Rejection: ${event.reason}`,
         stack: event.reason?.stack,
-        timestamp: Date.now(),
-        url: window.location.href
       });
+    });
+
+    window.addEventListener('error', (event) => {
+      this.logError({
+        message: event.message,
+        stack: event.error?.stack,
+      });
+    });
+  }
+
+  public logError(error: ErrorDetails): void {
+    const errorEntry = {
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+      ...error,
     };
-  }
 
-  public captureError(error: ErrorEvent) {
-    this.errors.unshift(error);
+    console.error('Error logged:', errorEntry);
     
-    // Keep only the last maxErrors
-    if (this.errors.length > this.maxErrors) {
-      this.errors = this.errors.slice(0, this.maxErrors);
-    }
-
-    // Log to console in development
+    // In development, we'll just log to console
     if (process.env.NODE_ENV === 'development') {
-      console.error('Error captured:', error);
+      return;
     }
 
-    // Here you would typically send the error to your error tracking service
-    this.sendToErrorService(error);
+    // In production, we would send to an error tracking service
+    this.errors = [errorEntry, ...this.errors].slice(0, this.maxErrors);
+    
+    // Here you would typically send to your error tracking service
+    // Example: Sentry.captureException(error);
   }
 
-  private sendToErrorService(error: ErrorEvent) {
-    // Implementation for sending to error tracking service like Sentry
-    // For now, we'll just store it locally
-    try {
-      localStorage.setItem('lastError', JSON.stringify(error));
-    } catch (e) {
-      console.error('Failed to store error:', e);
-    }
-  }
-
-  public getRecentErrors(): ErrorEvent[] {
+  public getRecentErrors(): ErrorDetails[] {
     return [...this.errors];
   }
 
-  public clearErrors() {
+  public clearErrors(): void {
     this.errors = [];
-    try {
-      localStorage.removeItem('lastError');
-    } catch (e) {
-      console.error('Failed to clear errors:', e);
-    }
   }
 }
 
+// Create a simple hook for components to use
+export const useErrorTracking = () => {
+  const errorTracker = ErrorTracker.getInstance();
+
+  return {
+    logError: (error: ErrorDetails) => errorTracker.logError(error),
+    getRecentErrors: () => errorTracker.getRecentErrors(),
+    clearErrors: () => errorTracker.clearErrors(),
+  };
+};
+
+// Export singleton instance
 export const errorTracker = ErrorTracker.getInstance();
 
-// React error boundary helper
-export const logErrorToService = (error: Error, componentStack: string) => {
-  errorTracker.captureError({
+// Error boundary helper
+export const logErrorBoundary = (error: Error, componentStack: string, componentName?: string) => {
+  errorTracker.logError({
     message: error.message,
     stack: error.stack,
-    componentStack,
-    timestamp: Date.now(),
-    url: window.location.href
+    componentName,
+    additionalInfo: { componentStack },
   });
 };

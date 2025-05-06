@@ -1,194 +1,152 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
-import { Link } from 'react-router-dom'; // Assuming react-router-dom is used for navigation
-import { ArrowRight, Box, CheckCircle } from 'lucide-react';
-
-const benefits = [
-  'Custom sizes and designs',
-  'Eco-friendly materials',
-  'Competitive pricing',
-  'Fast turnaround times'
-];
-
-// Add background image URL at the top
-const CTA_BG = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=2000';
+import { motion } from 'framer-motion';
+import { ArrowRight, Box, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const CTA = () => {
-  // Ref for the section to track scroll progress
-  const containerRef = useRef<HTMLDivElement>(null);
-  // Removed scrollYProgress and y/opacity transforms for a simpler, less scroll-dependent background animation
-
-  // Variants for staggered text and list item animations
-  const textContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1, // Delay between child animations
-      },
-    },
-  };
-
-  const textItemVariants = {
-    hidden: { opacity: 0, y: 30 }, // Start lower
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-  };
-
-  // Variants for the main animated box
-  const boxVariants = {
-    hidden: { opacity: 0, scale: 0.7, rotate: -10 },
-    visible: { opacity: 1, scale: 1, rotate: 0, transition: { duration: 0.8, ease: 'easeOut' } },
-  };
-
-  // Variants for the floating box elements
-  const floatingBoxVariants = {
-      animate: (i: number) => ({
-        y: [-20, -60, -20], // Vertical movement
-        x: [-20 + i * 20, 0 + i * 20, 20 + i * 20], // Horizontal drift
-        rotate: [0, 360], // Rotation
-        opacity: [0, 1, 0], // Fade in and out
-        transition: {
-          duration: 4, // Increased duration
-          delay: i * 0.8, // Stagger delay
-          repeat: Infinity,
-          ease: "easeInOut" // Smoother ease
-        },
-      }),
-  };
-
-
   return (
-    <section
-      ref={containerRef}
-      className="relative py-24 bg-gray-950 text-gray-100 overflow-hidden" // Updated background and text colors
-    >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 z-0">
-        {/* High-quality background image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${CTA_BG})` }}
-        />
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-950/90 to-gray-950 opacity-90" />
-        {/* More prominent background pattern with subtle animation */}
-        <motion.div
-          className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/clean-gray-paper.png')] opacity-[0.05]" // Updated pattern and opacity
-           animate={{
-             scale: [1, 1.05, 1], // Subtle zoom effect
-             rotate: [0, 0.5, 0], // Subtle rotation
-           }}
-           transition={{
-             duration: 30, // Slow animation
-             repeat: Infinity,
-             ease: "linear"
-           }}
-        />
-      </div>
+    <section className="py-24 relative overflow-hidden">
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950" />
+      
+      {/* Animated Pattern Background */}
+      <motion.div
+        className="absolute inset-0 opacity-[0.02]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239CA3AF' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}
+        animate={{
+          backgroundPosition: ['0px 0px', '100px 100px'],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+      />
 
-      <div className="container mx-auto px-6 relative z-10"> {/* Adjusted padding and z-index */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"> {/* Adjusted gap */}
-          {/* Left Column - Text Content */}
+      {/* Content */}
+      <div className="container mx-auto px-6 relative">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
-            variants={textContainerVariants}
-            initial="hidden"
-            whileInView="visible" // Animate when section is in view
-            viewport={{ once: true, amount: 0.3 }} // Trigger when 30% is visible
-            className="text-gray-100"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6 }}
+            className="mb-12"
           >
-            <motion.h2
-              variants={textItemVariants}
-              className="text-4xl md:text-5xl font-extrabold mb-6 text-teal-400" // Updated color and font weight
-            >
-              Ready to Transform Your Packaging?
-            </motion.h2>
-            <motion.p
-               variants={textItemVariants}
-              className="text-gray-300 text-lg mb-8" // Updated text color
-            >
-              Join thousands of businesses that trust us with their packaging needs.
-              Get started today and receive a free consultation with our experts.
-            </motion.p>
-
-            <motion.ul
-               variants={textContainerVariants} // Stagger benefits list items
-               initial="hidden"
-               whileInView="visible" // Animate when section is in view
-               viewport={{ once: true, amount: 0.3 }} // Trigger when 30% is visible
-              className="space-y-4 mb-10" // Increased bottom margin
-            >
-              {benefits.map((benefit, index) => (
-                <motion.li
-                  key={benefit}
-                  variants={textItemVariants} // Animate each list item
-                  className="flex items-center text-gray-200" // Updated text color
-                >
-                  <CheckCircle className="w-5 h-5 text-teal-500 mr-3 flex-shrink-0" /> {/* Updated color */}
-                  {benefit}
-                </motion.li>
-              ))}
-            </motion.ul>
-
-            <motion.div
-               variants={textItemVariants} // Animate the button container
-              className="flex flex-wrap gap-4" // Use flex-wrap for responsiveness
-            >
-              {/* Primary Button */}
-              <Link
-                to="/request-quote"
-                className="inline-flex items-center px-8 py-3 bg-teal-500 text-gray-900 rounded-full font-semibold hover:bg-teal-600 transition-all duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50" // Matched primary button style
-              >
-                Get Started
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Link>
-               {/* Secondary Button */}
-              <Link
-                to="/products"
-                className="inline-flex items-center px-8 py-3 bg-gray-800 text-gray-200 rounded-full font-semibold hover:bg-gray-700 transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50" // Matched secondary button style
-              >
-                View Products
-              </Link>
-            </motion.div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-100">
+              Ready to Transform Your{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400">
+                Packaging Experience?
+              </span>
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Join thousands of businesses that trust us with their packaging needs. 
+              Start your journey towards better packaging solutions today.
+            </p>
           </motion.div>
 
-          {/* Right Column - Animated Box */}
           <motion.div
-            variants={boxVariants}
-            initial="hidden"
-            whileInView="visible" // Animate when section is in view
-            viewport={{ once: true, amount: 0.5 }} // Trigger when 50% is visible
-            className="relative flex items-center justify-center" // Center the box icon
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            {/* Main Animated Box Icon */}
-            <motion.div
-              animate={{
-                scale: [1, 1.05, 1], // Subtle pulse effect
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="w-48 h-48 md:w-64 md:h-64 text-teal-500 relative z-10" // Updated size and color
+            <Link
+              to="/request-quote"
+              className="group relative inline-flex items-center gap-2 px-8 py-4 bg-teal-500 text-gray-900 rounded-full font-semibold 
+                hover:bg-teal-600 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl 
+                focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-gray-900"
             >
-              <Box className="w-full h-full" />
-            </motion.div>
-
-            {/* Floating Elements */}
-            {[...Array(5)].map((_, index) => ( // Increased number of floating boxes
+              Get Started
+              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
               <motion.div
-                key={index}
-                className="absolute"
-                custom={index} // Pass index as custom prop
-                variants={floatingBoxVariants} // Apply floating animation variants
-                initial="hidden" // Use hidden initially
-                animate="animate" // Start the infinite animation
+                className="absolute -inset-1 rounded-full bg-teal-400 opacity-0 transition-opacity duration-300 group-hover:opacity-20 blur"
+                initial={false}
+                animate={{ scale: [0.8, 1.2, 0.8] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
+            </Link>
+
+            <Link
+              to="/contact"
+              className="group inline-flex items-center gap-2 px-8 py-4 bg-gray-800 text-gray-100 rounded-full font-semibold
+                hover:bg-gray-700 transition-all duration-300
+                focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+            >
+              Contact Sales
+              <Mail className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 pt-16 border-t border-gray-800"
+          >
+            {[
+              { number: '10K+', label: 'Happy Customers' },
+              { number: '1M+', label: 'Boxes Delivered' },
+              { number: '99%', label: 'Satisfaction Rate' }
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 * index }}
+                className="text-center"
               >
-                <Box className="w-6 h-6 text-teal-500/60" /> {/* Updated color and size */}
+                <div className="text-4xl font-bold text-teal-400 mb-2">
+                  {stat.number}
+                </div>
+                <div className="text-gray-400">
+                  {stat.label}
+                </div>
               </motion.div>
             ))}
           </motion.div>
         </div>
+
+        {/* Floating Elements */}
+        <motion.div
+          className="absolute top-10 -left-16 text-teal-500/20"
+          animate={{
+            y: [0, 20, 0],
+            rotate: [0, 10, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        >
+          <Box size={120} />
+        </motion.div>
+        
+        <motion.div
+          className="absolute bottom-10 -right-16 text-teal-500/20"
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, -10, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5
+          }}
+        >
+          <Box size={120} />
+        </motion.div>
       </div>
     </section>
   );

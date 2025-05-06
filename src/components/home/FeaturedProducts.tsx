@@ -21,23 +21,47 @@ const products = [
   {
     id: 1,
     name: 'Custom Shipping Boxes',
-    description: 'Durable corrugated boxes designed for safe product delivery.',
+    category: 'Shipping & Logistics',
+    price: 'From $2.99/unit',
+    description: 'Durable corrugated boxes designed for safe product delivery, with custom printing options and eco-friendly materials.',
     image: 'https://images.unsplash.com/photo-1595079676601-f1adf5be5dee?auto=format&fit=crop&q=80&w=800',
-    features: ['Custom sizes', 'Brand printing', 'Eco-friendly materials']
+    features: [
+      'Custom sizes & dimensions',
+      'Full-color brand printing',
+      'Eco-friendly materials',
+      'Bulk order discounts',
+      'Weather-resistant options'
+    ]
   },
   {
     id: 2,
-    name: 'Retail Packaging',
-    description: 'Eye-catching retail boxes that enhance product presentation.',
+    name: 'Premium Retail Packaging',
+    category: 'Retail & Display',
+    price: 'From $3.99/unit',
+    description: 'Eye-catching retail boxes that enhance product presentation, featuring premium finishes and customizable designs.',
     image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800',
-    features: ['Premium finish', 'Window options', 'Various styles']
+    features: [
+      'Premium finish options',
+      'Window cut-outs available',
+      'Embossing & foil stamping',
+      'Magnetic closure options',
+      'Recyclable materials'
+    ]
   },
   {
     id: 3,
-    name: 'Food Packaging',
-    description: 'Food-grade packaging solutions for maximum freshness.',
+    name: 'Food-Grade Packaging',
+    category: 'Food & Beverage',
+    price: 'From $1.99/unit',
+    description: 'Food-grade packaging solutions ensuring maximum freshness and safety, perfect for restaurants and food services.',
     image: 'https://images.unsplash.com/photo-1606755456206-b25206cde27e?auto=format&fit=crop&q=80&w=800',
-    features: ['FDA approved', 'Moisture resistant', 'Temperature safe']
+    features: [
+      'FDA approved materials',
+      'Moisture & grease resistant',
+      'Temperature safe (-20°C to 150°C)',
+      'Tamper-evident options',
+      'Microwave-safe variants'
+    ]
   }
 ];
 

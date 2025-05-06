@@ -1,155 +1,171 @@
 import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import {
-  ChevronRight,
-  Settings as CustomizeIcon,
-  Leaf,
-  Shield,
-  Clock
+import { 
+  Box, Shield, Truck, Recycle, 
+  PaintBucket, Banknote, Users, Clock 
 } from 'lucide-react';
-import { Link } from 'react-router-dom'; // Assuming react-router-dom is used for navigation
 
 const features = [
   {
-    id: 1,
-    title: 'Custom Design',
-    description: 'Tailor-made packaging solutions that perfectly match your brand identity.',
-    image: 'https://images.unsplash.com/photo-1586528116493-d795f2095332?auto=format&fit=crop&q=80&w=800',
-    icon: CustomizeIcon
+    title: 'Custom Sizes & Designs',
+    description: 'Tailor your packaging to your exact specifications with our flexible customization options.',
+    icon: Box,
+    color: 'text-teal-400',
+    bgColor: 'bg-teal-400/10'
   },
   {
-    id: 2,
+    title: 'Quality Guaranteed',
+    description: 'Every box undergoes rigorous quality checks to ensure durability and reliability.',
+    icon: Shield,
+    color: 'text-purple-400',
+    bgColor: 'bg-purple-400/10'
+  },
+  {
+    title: 'Fast Shipping',
+    description: 'Quick turnaround times and reliable delivery to meet your deadlines.',
+    icon: Truck,
+    color: 'text-blue-400',
+    bgColor: 'bg-blue-400/10'
+  },
+  {
     title: 'Eco-Friendly Materials',
-    description: 'Sustainable packaging options that help reduce environmental impact.',
-    image: 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&q=80&w=800',
-    icon: Leaf
+    description: 'Sustainable packaging solutions that minimize environmental impact.',
+    icon: Recycle,
+    color: 'text-green-400',
+    bgColor: 'bg-green-400/10'
   },
   {
-    id: 3,
-    title: 'Quality Assurance',
-    description: 'Rigorous testing ensures your products arrive safely every time.',
-    image: 'https://images.unsplash.com/photo-1598343672916-de13ab0636ed?auto=format&fit=crop&q=80&w=800',
-    icon: Shield
+    title: 'Premium Printing',
+    description: 'High-quality printing options to make your brand stand out.',
+    icon: PaintBucket,
+    color: 'text-pink-400',
+    bgColor: 'bg-pink-400/10'
   },
   {
-    id: 4,
-    title: 'Fast Turnaround',
-    description: 'Quick production and delivery to meet your business needs.',
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=800',
-    icon: Clock
+    title: 'Competitive Pricing',
+    description: 'Cost-effective solutions without compromising on quality.',
+    icon: Banknote,
+    color: 'text-yellow-400',
+    bgColor: 'bg-yellow-400/10'
+  },
+  {
+    title: 'Expert Support',
+    description: 'Dedicated team to assist you throughout the ordering process.',
+    icon: Users,
+    color: 'text-indigo-400',
+    bgColor: 'bg-indigo-400/10'
+  },
+  {
+    title: '24/7 Order Tracking',
+    description: 'Real-time updates on your order status anytime, anywhere.',
+    icon: Clock,
+    color: 'text-orange-400',
+    bgColor: 'bg-orange-400/10'
   }
 ];
 
 const Features = () => {
-  const [ref, inView] = useInView({
-    threshold: 0.1, // Trigger when 10% of the element is visible
-    triggerOnce: true // Only trigger the animation once
-  });
-
-  // Animation variants for staggered appearance of feature cards
-  const cardContainerVariants = {
+  const containerVariants = {
     hidden: {},
     visible: {
       transition: {
         staggerChildren: 0.1,
+        delayChildren: 0.2,
       },
     },
   };
 
-  const cardItemVariants = {
-    hidden: { opacity: 0, y: 50 }, // Start lower
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-  };
-
-  // Animation variants for the heading and subheading
-   const textVariants = {
+  const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: 'easeOut' }
+    },
   };
-
 
   return (
-    <section className="py-20 bg-gray-950 text-gray-100"> {/* Updated background and text color */}
-      <div className="container mx-auto px-6"> {/* Adjusted padding */}
+    <section className="py-24 bg-gray-950">
+      <div className="container mx-auto px-6">
         <motion.div
-           variants={textVariants}
-           initial="hidden"
-           animate="visible"
-           className="text-center max-w-4xl mx-auto mb-16" // Increased max-width
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-teal-400"> {/* Updated color and font weight */}
-            Why Choose Boxify?
+          <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-teal-400 to-blue-400 bg-clip-text text-transparent">
+            Why Choose Our Packaging Solutions?
           </h2>
-          <p className="text-gray-300 text-lg"> {/* Updated text color */}
-            Discover the innovative features that make our packaging solutions stand out.
-            We combine quality, sustainability, and design to deliver excellence.
+          <p className="text-gray-300 text-lg">
+            Discover the advantages that make us the preferred choice for businesses 
+            seeking reliable and innovative packaging solutions.
           </p>
         </motion.div>
 
         <motion.div
-          ref={ref}
-          variants={cardContainerVariants}
+          variants={containerVariants}
           initial="hidden"
-          animate={inView ? "visible" : "hidden"} // Animate based on inView status
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
         >
-          {features.map((feature) => (
+          {features.map((feature, index) => (
             <motion.div
-              key={feature.id}
-              variants={cardItemVariants}
-              whileHover={{ scale: 1.03, boxShadow: "0 15px 30px rgba(0, 0, 0, 0.2)" }} // Enhanced hover effect
-              transition={{ duration: 0.3 }}
-              className="relative bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-700" // Updated card styles
+              key={feature.title}
+              variants={itemVariants}
+              whileHover={{ 
+                scale: 1.03,
+                transition: { duration: 0.2 }
+              }}
+              className="relative group"
             >
-              {/* Feature Image */}
-              <img
-                src={feature.image}
-                alt={feature.title}
-                className="w-full h-40 object-cover rounded-t-2xl mb-6"
-              />
+              <div className={`
+                rounded-2xl p-6 h-full
+                bg-gray-900/50 backdrop-blur-sm
+                border border-gray-800
+                transition-all duration-300
+                group-hover:border-gray-700
+                group-hover:bg-gray-900/70
+                group-hover:shadow-lg
+              `}>
+                {/* Background Glow Effect */}
+                <div className={`
+                  absolute inset-0 -z-10 rounded-2xl opacity-0
+                  group-hover:opacity-20 transition-opacity duration-300
+                  ${feature.bgColor} blur-xl
+                `} />
 
-              {/* Feature Content */}
-              <h3 className="text-xl font-semibold mb-3 text-gray-100">{feature.title}</h3> {/* Updated text color */}
-              <p className="text-gray-300 mb-6">{feature.description}</p> {/* Updated text color */}
+                {/* Icon */}
+                <div className={`
+                  w-12 h-12 rounded-xl mb-4
+                  flex items-center justify-center
+                  ${feature.bgColor} ${feature.color}
+                `}>
+                  <feature.icon className="w-6 h-6" />
+                </div>
 
-              {/* Learn More Link */}
-              <Link
-                to="#"
-                className="inline-flex items-center text-teal-400 font-medium hover:text-teal-500 transition-colors duration-200" // Updated link color
-              >
-                Learn More
-                <motion.span
-                  className="ml-2"
-                  animate={{ x: [0, 4, 0] }} // Simple back and forth animation
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    repeatType: "loop" // Changed repeatType for continuous loop
-                  }}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </motion.span>
-              </Link>
+                {/* Content */}
+                <h3 className="text-xl font-semibold mb-2 text-gray-100">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-400">
+                  {feature.description}
+                </p>
 
+                {/* Hover Line Effect */}
+                <motion.div
+                  className={`
+                    absolute bottom-0 left-0 right-0 h-0.5
+                    origin-left ${feature.color} opacity-0
+                    group-hover:opacity-100
+                  `}
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
             </motion.div>
           ))}
-        </motion.div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          variants={textVariants} // Use the same text animation for the CTA
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"} // Animate based on inView status
-          transition={{ duration: 0.6, delay: 0.4 }} // Added a slight delay
-          className="text-center mt-20" // Increased top margin
-        >
-          <Link
-            to="/request-quote"
-            className="inline-flex items-center px-10 py-4 bg-teal-500 text-gray-900 rounded-full font-semibold hover:bg-teal-600 transition-all duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50" // Matched primary button style from Hero
-          >
-            Get Started with Custom Packaging
-            <ChevronRight className="ml-2 w-5 h-5" />
-          </Link>
         </motion.div>
       </div>
     </section>
